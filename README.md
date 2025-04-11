@@ -25,8 +25,8 @@ Innholdet blir lagret på en csv fil og krypteres/dekrypteres der.
 - matplotlib
 
 ## Filstruktur
-Filene under vil bli lagret lokalt på pcen din dersom du velger å kjøre py filen ene og alene. 
-Dersom du laster ned mappen "Prosjekt i PY1010" vil du kunne se filene når du kjører programmet. 
+Filene under vil bli lagret lokalt på pcen din dersom du velger å kjøre py filen ene og alene.
+Dersom du vil se filene som blir opprettet ved kjøring av programmet anbefaler jeg å åpne programmet via mappen jeg har laget "Prosjekt i PY1010" og åpne hele den mappen i en kode editor/IDE.
 - `passord.csv`: Lagrede passord
 - `hemmelig.nøkkel`: Krypteringsnøkkel
 
