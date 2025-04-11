@@ -13,7 +13,7 @@ Passordene krypteres ved hjelp av biblioteket cryptography med symmetrisk krypte
 Programmet gir også mulighet til å generere tilfeldige og sikre passord.
 Innholdet blir lagret på en csv fil og krypteres/dekrypteres der.
 
-## Funksjoner
+## Ulike funksjoner
 - Sikker lagring og henting av passord
 - Generering av sterke tilfeldige passord
 - Enkel grafisk brukergrensesnitt (GUI)
