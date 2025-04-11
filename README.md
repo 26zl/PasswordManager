@@ -17,12 +17,14 @@ Innholdet blir lagret på en csv fil og krypteres/dekrypteres der.
 - Enkel grafisk brukergrensesnitt (GUI)
 - Oversiktlig visualisering av lagrede plattformer
 
-## Avhengigheter
+## Avhengigheter som må lastes ned
 - cryptography
 - numpy
 - matplotlib
 
 ## Filstruktur
+Filene under vil bli lagret lokalt på pcen din dersom du velger å kjøre py filen ene og alene. 
+Dersom du laster ned mappen "Prosjekt i PY1010" vil du kunne se filene når du kjører programmet. 
 - `passord.csv`: Lagrede passord
 - `hemmelig.nøkkel`: Krypteringsnøkkel
 
