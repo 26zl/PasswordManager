@@ -1,6 +1,6 @@
 # Prosjekt i PY1010
 
-#Les meg først
+# Les meg først
 
 # Passordbehandler
 
