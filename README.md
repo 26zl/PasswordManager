@@ -9,6 +9,7 @@ Dato levert: 11. april 2025
 Dette prosjektet er en passordbehandler som gjør det mulig for brukeren å lagre, hente og administrere passord lokalt på datamaskinen.  
 Passordene krypteres ved hjelp av biblioteket cryptography med symmetrisk kryptering (Fernet).  
 Programmet gir også mulighet til å generere tilfeldige og sikre passord.
+Innholdet blir lagret på en csv fil og krypteres/dekrypteres der.
 
 ## Funksjoner
 - Sikker lagring og henting av passord
