@@ -1,5 +1,7 @@
 # Prosjekt i PY1010
 
+#Les meg først
+
 # Passordbehandler
 
 Eier: Laurent Zogaj  
