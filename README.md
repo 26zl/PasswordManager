@@ -1,38 +1,47 @@
-# Prosjekt i PY1010
+# PassordBehandler
 
-# Les meg først
-
-# Passordbehandler
-
-Eier: Laurent Zogaj  
-Dato levert: 11. april 2025  
+**Eier:** Laurent Zogaj  
+**Dato levert:** 11. april 2025  
 
 ## Beskrivelse
 Dette prosjektet er en passordbehandler som gjør det mulig for brukeren å lagre, hente og administrere passord lokalt på datamaskinen.  
-Passordene krypteres ved hjelp av biblioteket cryptography med symmetrisk kryptering (Fernet).  
-Programmet gir også mulighet til å generere tilfeldige og sikre passord.
-Innholdet blir lagret på en csv fil og krypteres/dekrypteres der.
 
-## Ulike funksjoner
+Passordene krypteres ved hjelp av biblioteket cryptography med symmetrisk kryptering (Fernet). Programmet gir også mulighet til å generere tilfeldige og sikre passord. Innholdet blir lagret på en csv fil og krypteres/dekrypteres der.
+
+## Hovedfunksjoner
 - Sikker lagring og henting av passord
 - Generering av sterke tilfeldige passord
 - Enkel grafisk brukergrensesnitt (GUI)
 - Oversiktlig visualisering av lagrede plattformer
 
-## Avhengigheter som må lastes ned
-- cryptography
-- numpy
-- matplotlib
+## Avhengigheter
+Følgende pakker må installeres:
+```
+pip install cryptography numpy matplotlib
+```
 
 ## Filstruktur
-Last ned hele prosjektet som zip. Deretter åpne det i din prefererte IDE/kode-editor. Installer så pakkene og kjør programmet. 
-Du vil da se filene under opprettet.
-
-- `passord.csv`: Lagrede passord
+Programmet oppretter følgende filer:
+- `passord.csv`: Lagrede passord (kryptert)
 - `hemmelig.nøkkel`: Krypteringsnøkkel
 
-## Hvordan kjøre programmet
+## Bruksanvisning
+1. Installer avhengigheter som beskrevet ovenfor
+2. Last ned repoet i sin helhet.
+3. Kjør `password_manager.py`. 
+4. Første gang programmet kjøres vil det opprette en krypteringsnøkkel
+5. Bruk GUI for å legge til, se og administrere passord etc.
 
-### Installer nødvendige pakker 
-```sh
-pip install cryptography numpy matplotlib
+## Sikkerhet
+- Alle passord krypteres med Fernet-kryptering før lagring
+- Krypteringsnøkkelen lagres separat i `hemmelig.nøkkel`
+- Innholdet i CSV-filen er uleselig uten riktig dekrypteringsnøkkel
+
+## Videre funksjoner
+Fremtidige utvidelser planlagt for prosjektet:
+- Bedre håndtering av nøkkel
+- Legge til masterpassord for tilgang til programmet
+- Migrering fra CSV til JSON for mer fleksibel datalagring
+- SQLite-integrasjon for forbedret databaser og søkefunksjoner
+- Base64-implementering for ytterligere sikkerhetslag
+- Støtte for flere språk
