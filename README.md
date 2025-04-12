@@ -39,9 +39,10 @@ Programmet oppretter følgende filer:
 
 ## Videre funksjoner
 Fremtidige utvidelser planlagt for prosjektet:
-- Bedre håndtering av nøkkel
+- Bedre håndtering av krypterings nøkkel
 - Legge til masterpassord for tilgang til programmet
-- Migrering fra CSV til JSON for mer fleksibel datalagring
-- SQLite-integrasjon for forbedret databaser og søkefunksjoner
+- Legge til søtte for JSON også
+- SQLite-integrasjon 
 - Base64-implementering for ytterligere sikkerhetslag
 - Støtte for flere språk
+- Og generell kode forbedring
