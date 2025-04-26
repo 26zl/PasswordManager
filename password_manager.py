@@ -1,41 +1,39 @@
 """
-Passordbehandler
-----------------
+Password Manager
+---------------
 
-Eier: Laurent Zogaj
-Dato levert: 11. april 2025
+Owner: Laurent Zogaj
+Date delivered: April 11, 2025
+Updated: April 26, 2025 
 
-Beskrivelse:
-Dette prosjektet er en passordbehandler som gjør det mulig for brukeren å lagre, hente og administrere passord på en sikker måte lokalt på datamaskinen. 
-Passordene krypteres ved hjelp av biblioteket cryptography med symmetrisk kryptering (Fernet). 
-Programmet gir også mulighet til å generere tilfeldige og sikre passord.
+Description:
+This project is a password manager that allows users to store, retrieve, and manage passwords
+securely on their computer. Passwords are encrypted using the cryptography library with
+symmetric encryption (Fernet). The program also provides functionality to generate random
+and secure passwords.
 
-Avhengigheter:
+Dependencies:
 - tkinter (for GUI)
-- cryptography (for kryptering/dekryptering)
-- numpy (vektorisert plotting)
-- matplotlib (plotting av data)
-- secrets (for sikker passordgenerering)
-- string (for tegnsett)
-- csv (for lagring av passord i CSV-format)
-- datetime (for tidsstempling av passord)
-- os (for filhåndtering)
-- sys (for systemfunksjoner)
+- cryptography (for encryption/decryption)
+- secrets (for secure password generation)
+- string (for character sets)
+- csv (for storing passwords in CSV format)
+- datetime (for password timestamps)
+- os (for file handling)
+- sys (for system functions)
 
-Filstruktur:
-Disse vil bli opprettet i det du starter applikasjonen og lagrer passord
-- passord.csv: lagret passorddata
-- hemmelig.nøkkel: krypteringsnøkkel
+File structure:
+These will be created when you start the application and save passwords
+- passwords.csv: stored password data
+- secret.key: encryption key
 
-Viktig:
-Dette er en kun en prototype-applikasjon.
+Important:
+This is only a prototype application.
 """
 
 # Imports
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
-import matplotlib.pyplot as plt
-import numpy as np
 import secrets
 import string
 import os
@@ -44,325 +42,311 @@ import csv
 import datetime
 from cryptography.fernet import Fernet
 
-# --- Konstanter ---
-LAGRE_FIL = "passord.csv"  # Selve filen som lagrer passordene
-NØKKEL_FIL = "hemmelig.nøkkel"  # Filen som inneholder krypteringsnøkkelen
+# --- Constants ---
+SAVE_FILE = "passwords.csv"  # File storing the passwords
+KEY_FILE = "secret.key"      # File containing the encryption key
 
-# --- Globale variabler ---
-lagrede_passord = {}  # Lager en tom dictionary for å lagre passordene
-nøkkel = None  # Holder krypteringsnøkkelen
+# --- Global variables ---
+saved_passwords = {}  # Empty dictionary to store passwords
+key = None           # Holds the encryption key
 
 
-# --- Kryptering ---
-# Her henter vi eller lager nøkkelen
-def hent_lage_nøkkel():
-    if os.path.exists(NØKKEL_FIL):
-        with open(NØKKEL_FIL, "rb") as f:
+# --- Encryption ---
+# Get or create the encryption key
+def get_create_key():
+    if os.path.exists(KEY_FILE):
+        with open(KEY_FILE, "rb") as f:
             return f.read()
-    ny_nøkkel = Fernet.generate_key()
-    with open(NØKKEL_FIL, "wb") as f:
-        f.write(ny_nøkkel)
-    return ny_nøkkel
+    new_key = Fernet.generate_key()
+    with open(KEY_FILE, "wb") as f:
+        f.write(new_key)
+    return new_key
 
-# Her krypterer vi passordet
-def krypter_passord(passord):
+# Encrypt the password
+def encrypt_password(password):
     try:
-        f = Fernet(nøkkel)
-        if not isinstance(passord, str):
-            passord = str(passord)
-        return f.encrypt(passord.encode("utf-8"))
+        f = Fernet(key)
+        if not isinstance(password, str):
+            password = str(password)
+        return f.encrypt(password.encode("utf-8"))
     except Exception as error:
-        messagebox.showerror("Feil", f"Kunne ikke kryptere passord: {error}")
+        messagebox.showerror("Error", f"Could not encrypt password: {error}")
         return None
     
-# Her dekrypterer vi passordet
-def dekrypter_passord(kryptert):
+# Decrypt the password
+def decrypt_password(encrypted):
     try:
-        f = Fernet(nøkkel)
-        if isinstance(kryptert, str):
-            kryptert = kryptert.encode("utf-8")
-        return f.decrypt(kryptert).decode("utf-8")
+        f = Fernet(key)
+        if isinstance(encrypted, str):
+            encrypted = encrypted.encode("utf-8")
+        return f.decrypt(encrypted).decode("utf-8")
     except Exception as error:
-        messagebox.showerror("Feil", f"Kunne ikke dekryptere passord: {error}")
+        messagebox.showerror("Error", f"Could not decrypt password: {error}")
         return None
 
 
-# --- Passord Generering ---
-# Generering av passord med secrets istedenfor random. Fordelen er at det gir sikrere genererte passord
-def generer_passord():
-    lengde = secrets.randbelow(18) + 8
-    tegn = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(secrets.choice(tegn) for _ in range(lengde))
+# --- Password Generation ---
+# Generate password using secrets instead of random for better security
+def generate_password():
+    length = secrets.randbelow(8) + 12  # Between 12-20 characters
+    chars = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(secrets.choice(chars) for _ in range(length))
 
-# --- Lagring og Henting ---
-# Lagrer passordene i en CSV-fil
-def lagre_passord(data):
+# --- Storage and Retrieval ---
+# Save passwords to a CSV file
+def save_passwords(data):
     try:
-        if not os.path.exists(NØKKEL_FIL):
-            messagebox.showerror("Feil", "Nøkkelfil mangler.")
+        if not os.path.exists(KEY_FILE):
+            messagebox.showerror("Error", "Key file is missing.")
             return False
         
-        with open(LAGRE_FIL, "w", newline='', encoding='utf-8') as f:
-            felt = ["platform", "brukernavn", "kryptert_passord", "dato"]
-            writer = csv.DictWriter(f, fieldnames=felt)
+        with open(SAVE_FILE, "w", newline='', encoding='utf-8') as f:
+            fields = ["platform", "username", "encrypted_password", "date"]
+            writer = csv.DictWriter(f, fieldnames=fields)
             writer.writeheader()
 
             for platform, info in data.items(): 
                 if not isinstance(info, dict):
                     continue
                 
-                passord_data = info.get("passord", b"")
-                if isinstance(passord_data, bytes):
-                    kryptert_passord = passord_data.decode("utf-8", errors="replace")
+                password_data = info.get("password", b"")
+                if isinstance(password_data, bytes):
+                    encrypted_password = password_data.decode("utf-8", errors="replace")
                 else:
-                    kryptert_passord = str(passord_data)
+                    encrypted_password = str(password_data)
                 
-                dato = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                if isinstance(info, dict) and "dato" in info:
-                    dato = info["dato"]
+                date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                if isinstance(info, dict) and "date" in info:
+                    date = info["date"]
                 
-                rad = {
+                row = {
                     "platform": platform,
-                    "brukernavn": info.get("brukernavn", ""),
-                    "kryptert_passord": kryptert_passord,
-                    "dato": dato
+                    "username": info.get("username", ""),
+                    "encrypted_password": encrypted_password,
+                    "date": date
                 }
-                writer.writerow(rad)
+                writer.writerow(row)
         return True
     except Exception as error:
-        messagebox.showerror("Lagringsfeil", f"Kunne ikke lagre: {error}")
+        messagebox.showerror("Save Error", f"Could not save: {error}")
         return False
     
-# Her henter vi passordene fra CSV-filen
-def hent_passord():
-    passord_data = {}
-    if not os.path.exists(LAGRE_FIL):
-        return passord_data
+# Load passwords from the CSV file
+def load_passwords():
+    password_data = {}
+    if not os.path.exists(SAVE_FILE):
+        return password_data
     try:
-        with open(LAGRE_FIL, "r", encoding='utf-8') as f:
+        with open(SAVE_FILE, "r", encoding='utf-8') as f:
             reader = csv.DictReader(f)
-            for rad in reader:
-                if "platform" not in rad or "kryptert_passord" not in rad:
+            for row in reader:
+                if "platform" not in row or "encrypted_password" not in row:
                     continue
                     
-                kryptert = rad["kryptert_passord"]
-                if not isinstance(kryptert, bytes):
+                encrypted = row["encrypted_password"]
+                if not isinstance(encrypted, bytes):
                     try:
-                        kryptert = kryptert.encode("utf-8")
+                        encrypted = encrypted.encode("utf-8")
                     except:
                         continue
                         
-                passord_data[rad["platform"]] = {
-                    "brukernavn": rad.get("brukernavn", ""),
-                    "passord": kryptert,
-                    "dato": rad.get("dato", "")
+                password_data[row["platform"]] = {
+                    "username": row.get("username", ""),
+                    "password": encrypted,
+                    "date": row.get("date", "")
                 }
-        return passord_data
+        return password_data
     except Exception as error:
-        messagebox.showerror("Feil", f"Kunne ikke lese fil: {error}")
+        messagebox.showerror("Error", f"Could not read file: {error}")
         return {}
 
-# --- GUI-funksjoner ---
-# Legger til passord i dictionary og lagrer det i CSV-filen
-def legg_til_felt():
+# --- GUI Functions ---
+# Add password to dictionary and save to CSV file
+def add_entry():
     platform = platform_entry.get().strip()
-    bruker = brukernavn_entry.get().strip()
-    passord = passord_entry.get().strip()
+    user = username_entry.get().strip()
+    password = password_entry.get().strip()
 
-    if not all([platform, bruker, passord]):
-        messagebox.showwarning("Feil", "Alle feltene må fylles ut.")
+    if not all([platform, user, password]):
+        messagebox.showwarning("Error", "All fields must be filled in.")
         return
-    if len(passord) < 8 or len(passord) > 25:
-        messagebox.showerror("Feil", "Passordet må være mellom 8 og 25 tegn langt.")
-        return
-        
-    kryptert = krypter_passord(passord)
-    if not kryptert:
+    if len(password) < 8 or len(password) > 25:
+        messagebox.showerror("Error", "Password must be between 8 and 25 characters long.")
         return
         
-    lagrede_passord[platform] = {
-        "brukernavn": bruker,
-        "passord": kryptert,
-        "dato": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    encrypted = encrypt_password(password)
+    if not encrypted:
+        return
+        
+    saved_passwords[platform] = {
+        "username": user,
+        "password": encrypted,
+        "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
-    if lagre_passord(lagrede_passord):
-        messagebox.showinfo("Lagring", "Passord lagret.")
-        clear_felt()
+    if save_passwords(saved_passwords):
+        messagebox.showinfo("Saved", "Password saved successfully.")
+        clear_fields()
     else:
-        messagebox.showerror("Feil", "Kunne ikke lagre passord.")
+        messagebox.showerror("Error", "Could not save password.")
 
-# Henter passord fra dictionary og dekrypterer det
-def hent_felt():
+# Retrieve password from dictionary and decrypt it
+def retrieve_entry():
     platform = platform_entry.get().strip()
     data = None
     
-    if platform in lagrede_passord:
-        data = lagrede_passord[platform]
+    if platform in saved_passwords:
+        data = saved_passwords[platform]
     else:
-        for navn, info in lagrede_passord.items():
-            if isinstance(navn, str) and isinstance(platform, str):
-                if navn.lower() == platform.lower():
-                    platform = navn
+        # Try case-insensitive search
+        for name, info in saved_passwords.items():
+            if isinstance(name, str) and isinstance(platform, str):
+                if name.lower() == platform.lower():
+                    platform = name
                     data = info
                     break
     
     if not data:
-        messagebox.showwarning("Feil", "Ingen data funnet.")
+        messagebox.showwarning("Error", "No data found.")
         return
     
-    passord = dekrypter_passord(data["passord"])
-    if passord:
-        messagebox.showinfo("Passord", f"Platform: {platform}\nBruker: {data['brukernavn']}\nPassord: {passord}")
+    password = decrypt_password(data["password"])
+    if password:
+        messagebox.showinfo("Password", f"Platform: {platform}\nUsername: {data['username']}\nPassword: {password}")
         platform_entry.delete(0, tk.END)
         platform_entry.insert(0, platform)
 
-# Viser diagram over platformer og antallet av dem
-def plot_lengths():
-    if not lagrede_passord:
-        messagebox.showwarning("Tomt", "Ingen plattformer å vise.")
-        return
-        
-    plattformer = list(lagrede_passord.keys())
-    plt.figure(figsize=(8, 6))
-    plt.pie([1] * len(plattformer), labels=plattformer, autopct='%1.1f%%')
-    plt.title(f"Oversikt over {len(plattformer)} plattformer")
-    plt.tight_layout()
-    plt.show()
+# Generate a random password and fill it in the password field
+def generate_and_fill():
+    password_entry.delete(0, tk.END)
+    password_entry.insert(0, generate_password())
 
-# Genererer et tilfeldig passord og fyller det inn i passordfeltet
-def generer_og_fyll():
-    passord_entry.delete(0, tk.END)
-    passord_entry.insert(0, generer_passord())
-
-# Clearer inputfeltene
-def clear_felt():
+# Clear the input fields
+def clear_fields():
     platform_entry.delete(0, tk.END)
-    brukernavn_entry.delete(0, tk.END)
-    passord_entry.delete(0, tk.END)
+    username_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
 
-# Nød funksjon for å slette alt
-def slett_alt():
-    if messagebox.askyesno("Bekreft sletting", "Er du sikker på at du vil slette alle data?"):
-        if not os.path.exists(LAGRE_FIL) and not os.path.exists(NØKKEL_FIL):
-            messagebox.showerror("Feil", "Ingen data funnet å slette.")
+# Emergency function to delete all data
+def delete_all():
+    if messagebox.askyesno("Confirm Deletion", "Are you sure you want to delete all data?"):
+        if not os.path.exists(SAVE_FILE) and not os.path.exists(KEY_FILE):
+            messagebox.showerror("Error", "No data found to delete.")
             return
             
-        lagrede_passord.clear()
+        saved_passwords.clear()
         
-        if os.path.exists(LAGRE_FIL):
-            os.remove(LAGRE_FIL)
-        if os.path.exists(NØKKEL_FIL):
-            os.remove(NØKKEL_FIL)
+        if os.path.exists(SAVE_FILE):
+            os.remove(SAVE_FILE)
+        if os.path.exists(KEY_FILE):
+            os.remove(KEY_FILE)
             
-        messagebox.showinfo("Slettet", "Alle data er fjernet.")
+        messagebox.showinfo("Deleted", "All data has been removed.")
         sys.exit(0) 
 
-# Informasjon om passordbehandleren og hvordan man bruker den
-def vis_info():
-    info_vindu = tk.Toplevel(window)
-    info_vindu.title("Informasjon om Passordbehandleren")
-    info_vindu.geometry("500x400")
+# Show information about the password manager and how to use it
+def show_info():
+    info_window = tk.Toplevel(window)
+    info_window.title("Password Manager Information")
+    info_window.geometry("500x400")
     
     # Scrollbar
-    tekst = scrolledtext.ScrolledText(info_vindu, wrap=tk.WORD)
-    tekst.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    text = scrolledtext.ScrolledText(info_window, wrap=tk.WORD)
+    text.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
     
-    # Sentrer teksten 
-    tekst.tag_configure("center", justify='center')
+    # Center the text 
+    text.tag_configure("center", justify='center')
 
-    # Informasjonstekst
-    informasjon_text = """
-    PASSORDBEHANDLER - BRUKSANVISNING
-    ================================
+    # Information text
+    information_text = """
+    PASSWORD MANAGER - USER GUIDE
+    =============================
     
-    Denne passordbehandleren hjelper deg med å lagre og håndtere dine passord på en sikker måte.
+    This password manager helps you store and manage your passwords securely.
     
-    FUNKSJONER:
-    -----------
+    FEATURES:
+    ---------
     
-    1. LAGRE PASSORD
-       Fyll inn platform (f.eks. Facebook, Gmail), brukernavn og passord, 
-       og trykk på "Lagre" for å lagre informasjonen 'sikkert'.
+    1. STORE PASSWORDS
+       Fill in platform (e.g., Facebook, Gmail), username and password,
+       and click "Save" to store the information securely.
     
-    2. HENTE PASSORD
-       Skriv inn platformnavn og trykk "Hent" for å vise brukernavn og passord.
+    2. RETRIEVE PASSWORDS
+       Enter the platform name and click "Retrieve" to view username and password.
     
-    3. GENERERE PASSORD
-       Trykk på "Generer" for å lage et tilfeldig, sterkt passord.
+    3. GENERATE PASSWORDS
+       Click "Generate" to create a random, strong password.
     
-    4. VISUALISERE PLATFORMER BRUKT
-       Trykk på "Vis Platform" for å se en graf over platformer
+    4. "EMERGENCY BUTTON!!" DELETE ALL DATA
+       Click "Delete All" to remove all stored passwords.
     
-    5. "NØDKNAPP!!" SLETTE ALL DATA
-       Trykk på "Slett Alt" for å fjerne alle lagrede passord.
+    SECURITY:
+    ---------
     
-    SIKKERHET:
-    ----------
-    
-    - Alle passord lagres kryptert på din datamaskin
-    - Bruk et sterkt, unikt passord for hver platform
-    - Regelmessig oppdater viktige passord for økt sikkerhet
+    - All passwords are stored encrypted on your computer
+    - Use a strong, unique password for each platform
+    - Regularly update important passwords for increased security
 
-    -NB!: Passordbehandleren er på ingen måte klar og mangler viktig funksjonalitet, dette er bare en basic versjon.
-    -Vennligst vær forsiktig med å bruke denne i produksjon, da det er en demo og ikke er ment for reell bruk.
+    NOTE: This password manager is by no means complete and lacks important functionality.
+    This is just a basic version for demonstration purposes.
+    Please be careful about using this in production as it is a demo and not intended for real use.
     """
     
-    # Setter inn teksten
-    tekst.insert(tk.END, informasjon_text, "center")
-    tekst.config(state=tk.DISABLED)
+    # Insert the text
+    text.insert(tk.END, information_text, "center")
+    text.config(state=tk.DISABLED)
     
-    ttk.Button(info_vindu, text="Lukk", command=info_vindu.destroy).pack(pady=10)
+    ttk.Button(info_window, text="Close", command=info_window.destroy).pack(pady=10)
 
-# --- Hovedprogram / GUI ---
-nøkkel = hent_lage_nøkkel()  # Initialiser nøkkel
-lagrede_passord = hent_passord()  # Laster inn eksisterende passord
+# --- Main Program / GUI ---
+key = get_create_key()           # Initialize key
+saved_passwords = load_passwords()  # Load existing passwords
 
 window = tk.Tk()
-window.title("Passordbehandler")
+window.title("Password Manager")
 
 style = ttk.Style()
 style.theme_use("clam")
 
-# Ramme
+# Frame
 main_frame = ttk.Frame(window, padding=10)
 main_frame.pack(fill=tk.BOTH, expand=True)
 
-# Infoknapp oppe
-ttk.Button(main_frame, text="Informasjon", command=vis_info).pack(pady=(0, 10))
+# Info button on top
+ttk.Button(main_frame, text="Information", command=show_info).pack(pady=(0, 10))
 
-# Inputfelt ramme
+# Input field frame
 input_frame = ttk.LabelFrame(main_frame, padding=10)
 input_frame.pack(fill=tk.X)
 
-# Feltene for input
-felt_frame = ttk.Frame(input_frame)
-felt_frame.pack(fill=tk.X)
+# Fields for input
+field_frame = ttk.Frame(input_frame)
+field_frame.pack(fill=tk.X)
 
-ttk.Label(felt_frame, text="Platform:").grid(row=0, column=0, sticky="E", padx=5, pady=5)
-platform_entry = ttk.Entry(felt_frame, width=30)
+ttk.Label(field_frame, text="Platform:").grid(row=0, column=0, sticky="E", padx=5, pady=5)
+platform_entry = ttk.Entry(field_frame, width=30)
 platform_entry.grid(row=0, column=1, padx=5, pady=5)
 
-ttk.Label(felt_frame, text="Brukernavn:").grid(row=1, column=0, sticky="E", padx=5, pady=5)
-brukernavn_entry = ttk.Entry(felt_frame, width=30)
-brukernavn_entry.grid(row=1, column=1, padx=5, pady=5)
+ttk.Label(field_frame, text="Username:").grid(row=1, column=0, sticky="E", padx=5, pady=5)
+username_entry = ttk.Entry(field_frame, width=30)
+username_entry.grid(row=1, column=1, padx=5, pady=5)
 
-ttk.Label(felt_frame, text="Passord:").grid(row=2, column=0, sticky="E", padx=5, pady=5)
-passord_entry = ttk.Entry(felt_frame, width=30, show="*")
-passord_entry.grid(row=2, column=1, padx=5, pady=5)
-ttk.Button(felt_frame, text="Generer", command=generer_og_fyll).grid(row=2, column=2, padx=5)
+ttk.Label(field_frame, text="Password:").grid(row=2, column=0, sticky="E", padx=5, pady=5)
+password_entry = ttk.Entry(field_frame, width=30, show="*")
+password_entry.grid(row=2, column=1, padx=5, pady=5)
+ttk.Button(field_frame, text="Generate", command=generate_and_fill).grid(row=2, column=2, padx=5)
 
-# Knapperad
-knapp_frame = ttk.Frame(input_frame)
-knapp_frame.pack(fill=tk.X, pady=10)
+# Button row
+button_frame = ttk.Frame(input_frame)
+button_frame.pack(fill=tk.X, pady=10)
 
-# Ulike knapper
-ttk.Button(knapp_frame, text="Hent", command=hent_felt).pack(side=tk.LEFT, expand=True, padx=5)
-ttk.Button(knapp_frame, text="Lagre", command=legg_til_felt).pack(side=tk.LEFT, expand=True, padx=5)
-ttk.Button(knapp_frame, text="Vis platformer", command=plot_lengths).pack(side=tk.LEFT, expand=True, padx=5)
+# Various buttons
+ttk.Button(button_frame, text="Retrieve", command=retrieve_entry).pack(side=tk.LEFT, expand=True, padx=5)
+ttk.Button(button_frame, text="Save", command=add_entry).pack(side=tk.LEFT, expand=True, padx=5)
+ttk.Button(button_frame, text="Clear", command=clear_fields).pack(side=tk.LEFT, expand=True, padx=5)
 
-# Knapper nede
-bunn_frame = ttk.Frame(main_frame)
-bunn_frame.pack(fill=tk.X, pady=10)
-ttk.Button(bunn_frame, text="Slett Alt", command=slett_alt).pack()
+# Bottom buttons
+bottom_frame = ttk.Frame(main_frame)
+bottom_frame.pack(fill=tk.X, pady=10)
+ttk.Button(bottom_frame, text="Delete All", command=delete_all).pack()
 
 window.mainloop()

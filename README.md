@@ -1,48 +1,49 @@
-# PassordBehandler
+# Password Manager
 
-**Eier:** Laurent Zogaj  
-**Dato levert:** 11. april 2025  
+**Owner:** Laurent Zogaj  
+**Date delivered:** April 11, 2025  
+**Updated:** April 26, 2025  
 
-## Beskrivelse
-Dette prosjektet er en passordbehandler som gjør det mulig for brukeren å lagre, hente og administrere passord lokalt på datamaskinen.  
+## Description
+This project is a password manager that enables users to store, retrieve, and manage passwords locally on their computer. 
 
-Passordene krypteres ved hjelp av biblioteket cryptography med symmetrisk kryptering (Fernet). Programmet gir også mulighet til å generere tilfeldige og sikre passord. Innholdet blir lagret på en csv fil og krypteres/dekrypteres der.
+Passwords are encrypted using the cryptography library with symmetric encryption (Fernet). The program also provides functionality to generate random and secure passwords. The content is stored in a CSV file and encrypted/decrypted there.
 
-## Hovedfunksjoner
-- Sikker lagring og henting av passord
-- Generering av sterke tilfeldige passord
-- Enkel grafisk brukergrensesnitt (GUI)
-- Oversiktlig visualisering av lagrede plattformer
+## Main Features
+- Secure storage and retrieval of passwords
+- Generation of strong random passwords
+- Simple graphical user interface (GUI)
+- Easy password management
 
-## Avhengigheter
-Følgende pakker må installeres:
+## Dependencies
+The following packages must be installed:
 ```
-pip install cryptography numpy matplotlib
+pip install cryptography
 ```
 
-## Filstruktur
-Programmet oppretter følgende filer:
-- `passord.csv`: Lagrede passord (kryptert)
-- `hemmelig.nøkkel`: Krypteringsnøkkel
+## File Structure
+The program creates the following files:
+- `passwords.csv`: Stored passwords (encrypted)
+- `secret.key`: Encryption key
 
-## Bruksanvisning
-1. Installer avhengigheter som beskrevet ovenfor
-2. Last ned repoet i sin helhet.
-3. Kjør `password_manager.py`. 
-4. Første gang programmet kjøres vil det opprette en krypteringsnøkkel
-5. Bruk GUI for å legge til, se og administrere passord etc.
+## User Guide
+1. Install dependencies as described above
+2. Download the repository in its entirety
+3. Run `password_manager.py`
+4. The first time the program runs, it will create an encryption key
+5. Use the GUI to add, view, and manage passwords etc.
 
-## Sikkerhet
-- Alle passord krypteres med Fernet-kryptering før lagring
-- Krypteringsnøkkelen lagres separat i `hemmelig.nøkkel`
-- Innholdet i CSV-filen er uleselig uten riktig dekrypteringsnøkkel
+## Security
+- All passwords are encrypted with Fernet encryption before storage
+- The encryption key is stored separately in `secret.key`
+- The content of the CSV file is unreadable without the correct decryption key
 
-## Videre funksjoner
-Fremtidige utvidelser planlagt for prosjektet:
-- Bedre håndtering av krypterings nøkkel
-- Legge til masterpassord for tilgang til programmet
-- Legge til søtte for JSON også
-- SQLite-integrasjon 
-- Base64-implementering for ytterligere sikkerhetslag
-- Støtte for flere språk
-- Og generell kode forbedring
+## Future Features
+Future extensions planned for the project:
+- Better handling of encryption key
+- Add master password for program access
+- Add support for JSON format
+- SQLite integration
+- Base64 implementation for additional security layer
+- Support for multiple languages
+- General code improvements
