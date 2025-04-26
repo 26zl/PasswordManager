@@ -1,3 +1,6 @@
+# Password Manager specific files
+passwords.csv
+secret.key
 
 ### macOS ###
 # General
